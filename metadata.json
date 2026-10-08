@@ -1,0 +1,6 @@
+{
+  "name": "SmartCampus Food Saver",
+  "description": "Avoid long dining hall lines, track live crowd capacity, and rescue delicious surplus meals on campus.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
