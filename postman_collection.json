@@ -1,0 +1,329 @@
+{
+  "info": {
+    "_postman_id": "9b12e690-3f1a-4d76-bc39-3a3f0190a421",
+    "name": "Campus Food Waste & Smart Dining Management API",
+    "description": "Comprehensive Postman collection for Campus Food Waste & Smart Dining Management System backend. Includes Student and Staff workflows, Crowd Tracking, Menu Inventory, Reservations, Surplus Flash Sales, and Food Waste Reduction Statistics.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "studentToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "staffToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cafeteriaId",
+      "value": "caf001",
+      "type": "string"
+    },
+    {
+      "key": "menuItemId",
+      "value": "food001",
+      "type": "string"
+    },
+    {
+      "key": "reservationId",
+      "value": "res001",
+      "type": "string"
+    },
+    {
+      "key": "surplusId",
+      "value": "surplus001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login as Student (Rahul)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('studentToken', json.token);",
+                  "    console.log('Saved studentToken');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rahul@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login as Staff (Chef Ramesh)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "    pm.collectionVariables.set('staffToken', json.token);",
+                  "    console.log('Saved staffToken');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@campusdining.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register New Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"email\": \"rahul.sharma@campus.edu\",\n  \"password\": \"password123\",\n  \"role\": \"student\",\n  \"campusId\": \"CAMPUS_01\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Get Current User Profile (/me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Cafeterias & Crowd Tracking",
+      "item": [
+        {
+          "name": "Get All Cafeterias",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/cafeterias", "host": ["{{baseUrl}}"], "path": ["cafeterias"] }
+          }
+        },
+        {
+          "name": "Get Cafeteria Details & Available Menu",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/cafeterias/{{cafeteriaId}}", "host": ["{{baseUrl}}"], "path": ["cafeterias", "{{cafeteriaId}}"] }
+          }
+        },
+        {
+          "name": "Get Current Crowd Status",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/cafeterias/{{cafeteriaId}}/crowd", "host": ["{{baseUrl}}"], "path": ["cafeterias", "{{cafeteriaId}}", "crowd"] }
+          }
+        },
+        {
+          "name": "Update Crowd Status (Staff Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{staffToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"crowdLevel\": \"HIGH\",\n  \"estimatedWaitTime\": 20\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/cafeterias/{{cafeteriaId}}/crowd", "host": ["{{baseUrl}}"], "path": ["cafeterias", "{{cafeteriaId}}", "crowd"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Menu & Inventory",
+      "item": [
+        {
+          "name": "Get Cafeteria Menu",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/cafeterias/{{cafeteriaId}}/menu", "host": ["{{baseUrl}}"], "path": ["cafeterias", "{{cafeteriaId}}", "menu"] }
+          }
+        },
+        {
+          "name": "Add Menu Item (Staff Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{staffToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Chole Bhature Combo\",\n  \"description\": \"Two fresh puffed bhatures served with spiced chickpeas\",\n  \"price\": 85,\n  \"category\": \"Main Course\",\n  \"quantityAvailable\": 20,\n  \"imageUrl\": \"https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=500\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/cafeterias/{{cafeteriaId}}/menu", "host": ["{{baseUrl}}"], "path": ["cafeterias", "{{cafeteriaId}}", "menu"] }
+          }
+        },
+        {
+          "name": "Get Individual Menu Item",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/menu/{{menuItemId}}", "host": ["{{baseUrl}}"], "path": ["menu", "{{menuItemId}}"] }
+          }
+        },
+        {
+          "name": "Update Inventory Quantity (Staff Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{staffToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantityAvailable\": 30\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/menu/{{menuItemId}}/inventory", "host": ["{{baseUrl}}"], "path": ["menu", "{{menuItemId}}", "inventory"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Reservations",
+      "item": [
+        {
+          "name": "Create Reservation (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cafeteriaId\": \"{{cafeteriaId}}\",\n  \"menuItemId\": \"{{menuItemId}}\",\n  \"quantity\": 2,\n  \"pickupDate\": \"2026-10-09\",\n  \"pickupTime\": \"13:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/reservations", "host": ["{{baseUrl}}"], "path": ["reservations"] }
+          }
+        },
+        {
+          "name": "Get Student Reservations History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+            "url": { "raw": "{{baseUrl}}/reservations/my", "host": ["{{baseUrl}}"], "path": ["reservations", "my"] }
+          }
+        },
+        {
+          "name": "Cancel Reservation (Restores Inventory)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+            "url": { "raw": "{{baseUrl}}/reservations/{{reservationId}}/cancel", "host": ["{{baseUrl}}"], "path": ["reservations", "{{reservationId}}", "cancel"] }
+          }
+        },
+        {
+          "name": "Staff View Cafeteria Reservations",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": { "raw": "{{baseUrl}}/reservations/cafeteria/{{cafeteriaId}}", "host": ["{{baseUrl}}"], "path": ["reservations", "cafeteria", "{{cafeteriaId}}"] }
+          }
+        },
+        {
+          "name": "Staff Complete Reservation",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{staffToken}}" }],
+            "url": { "raw": "{{baseUrl}}/reservations/{{reservationId}}/complete", "host": ["{{baseUrl}}"], "path": ["reservations", "{{reservationId}}", "complete"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Surplus Food Alerts & Rescue",
+      "item": [
+        {
+          "name": "Get Available Surplus Food Offers",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/surplus", "host": ["{{baseUrl}}"], "path": ["surplus"] }
+          }
+        },
+        {
+          "name": "Create Surplus Flash Offer (Staff Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{staffToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cafeteriaId\": \"{{cafeteriaId}}\",\n  \"menuItemId\": \"{{menuItemId}}\",\n  \"quantityAvailable\": 15,\n  \"originalPrice\": 80,\n  \"discountedPrice\": 30,\n  \"pickupStartTime\": \"20:00\",\n  \"pickupEndTime\": \"21:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/surplus", "host": ["{{baseUrl}}"], "path": ["surplus"] }
+          }
+        },
+        {
+          "name": "Claim Surplus Meal (Student)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{studentToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/surplus/{{surplusId}}/claim", "host": ["{{baseUrl}}"], "path": ["surplus", "{{surplusId}}", "claim"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Food Waste & Sustainability Statistics",
+      "item": [
+        {
+          "name": "Get Overall Campus Food Waste Stats",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/stats/food-waste", "host": ["{{baseUrl}}"], "path": ["stats", "food-waste"] }
+          }
+        },
+        {
+          "name": "Get Cafeteria Waste Stats",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/cafeterias/{{cafeteriaId}}/waste-stats", "host": ["{{baseUrl}}"], "path": ["cafeterias", "{{cafeteriaId}}", "waste-stats"] }
+          }
+        }
+      ]
+    }
+  ]
+}
